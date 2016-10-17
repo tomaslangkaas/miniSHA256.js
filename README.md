@@ -4,7 +4,7 @@ Minimal JavaScript implementation of SHA-256
 var sha256 = miniSHA256(); // new instance
 var hash   = sha256.digest(
                // message = 'abc'
-               // message as array of 32-bit integers MSD/BE
+               // message as array of 32-bit unsigned integers (big-endian)
                [0 | 0x61626300],
                // message length in bits
                8 * 3
