@@ -7,103 +7,91 @@
 var SHA256TestVectors = {
   'set 1': [
     {/*0*/
-      message: [], // message = ''
+      message: [], // ''
       messageLength: 0,
-      hash: [0 | 0xe3b0c442, 0 | 0x98fc1c14, 0 | 0x9afbf4c8, 0 | 0x996fb924, 
-             0 | 0x27ae41e4, 0 | 0x649b934c, 0 | 0xa495991b, 0 | 0x7852b855]
-    }
-
-    // vector #1
-    // message = 'a'
-    // hash = ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb
-
-    [0 | 0x61000000],
-    8, [0 | 0xca978112, 0 | 0xca1bbdca, 0 | 0xfac231b3, 0 | 0x9a23dc4d,
-      0 | 0xa786eff8, 0 | 0x147c4e72, 0 | 0xb9807785, 0 | 0xafee48bb
-    ],
-
-    // vector #2
-    // message = 'abc'
-    // hash = ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
-
-    [0 | 0x61626300],
-    8 * 3, [0 | 0xba7816bf, 0 | 0x8f01cfea, 0 | 0x414140de, 0 | 0x5dae2223,
-      0 | 0xb00361a3, 0 | 0x96177a9c, 0 | 0xb410ff61, 0 | 0xf20015ad
-    ],
-
-    // vector #3
-    // message = 'message digest'
-    // hash = f7846f55cf23e14eebeab5b4e1550cad5b509e3348fbc4efa3a1413d393cb650
-
-    [0 | 0x6d657373, 0 | 0x61676520, 0 | 0x64696765, 0 | 0x73740000],
-    8 * 14, [0 | 0xf7846f55, 0 | 0xcf23e14e, 0 | 0xebeab5b4, 0 | 0xe1550cad,
-      0 | 0x5b509e33, 0 | 0x48fbc4ef, 0 | 0xa3a1413d, 0 | 0x393cb650
-    ],
-
-    // vector #4
-    // message = 'abcdefghijklmnopqrstuvwxyz'
-    // hash = 71c480df93d6ae2f1efad1447c66c9525e316218cf51fc8d9ed832f2daf18b73
-
-    [0 | 0x61626364, 0 | 0x65666768, 0 | 0x696a6b6c, 0 | 0x6d6e6f70,
-      0 | 0x71727374, 0 | 0x75767778, 0 | 0x797a0000
-    ],
-    8 * 26, [0 | 0x71c480df, 0 | 0x93d6ae2f, 0 | 0x1efad144, 0 | 0x7c66c952,
-      0 | 0x5e316218, 0 | 0xcf51fc8d, 0 | 0x9ed832f2, 0 | 0xdaf18b73
-    ],
-
-    // vector #5
-    // message = 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
-    // hash = 248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1
-
-    [0 | 0x61626364, 0 | 0x62636465, 0 | 0x63646566, 0 | 0x64656667,
-      0 | 0x65666768, 0 | 0x66676869, 0 | 0x6768696a, 0 | 0x68696a6b,
-      0 | 0x696a6b6c, 0 | 0x6a6b6c6d, 0 | 0x6b6c6d6e, 0 | 0x6c6d6e6f,
-      0 | 0x6d6e6f70, 0 | 0x6e6f7071
-    ],
-    8 * 56, [0 | 0x248d6a61, 0 | 0xd20638b8, 0 | 0xe5c02693, 0 | 0x0c3e6039,
-      0 | 0xa33ce459, 0 | 0x64ff2167, 0 | 0xf6ecedd4, 0 | 0x19db06c1
-    ],
-
-    // vector #6
-    // message = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    // hash = db4bfcbd4da0cd85a60c3c37d3fbd8805c77f15fc6b1fdfe614ee0a7c8fdb4c0
-
-    [0 | 0x41424344, 0 | 0x45464748, 0 | 0x494a4b4c, 0 | 0x4d4e4f50,
-      0 | 0x51525354, 0 | 0x55565758, 0 | 0x595a6162, 0 | 0x63646566,
-      0 | 0x6768696a, 0 | 0x6b6c6d6e, 0 | 0x6f707172, 0 | 0x73747576,
-      0 | 0x7778797a, 0 | 0x30313233, 0 | 0x34353637, 0 | 0x38390000
-    ],
-    8 * 62, [0 | 0xdb4bfcbd, 0 | 0x4da0cd85, 0 | 0xa60c3c37, 0 | 0xd3fbd880,
-      0 | 0x5c77f15f, 0 | 0xc6b1fdfe, 0 | 0x614ee0a7, 0 | 0xc8fdb4c0
-    ],
-
-    // vector #7
-    // message = '12345678901234567890123456789012345678901234567890123456789012345678901234567890'
-    // hash = f371bc4a311f2b009eef952dd83ca80e2b60026c8e935592d0f9c308453c813e
-
-    [0 | 0x31323334, 0 | 0x35363738, 0 | 0x39303132, 0 | 0x33343536,
-      0 | 0x37383930, 0 | 0x31323334, 0 | 0x35363738, 0 | 0x39303132,
-      0 | 0x33343536, 0 | 0x37383930, 0 | 0x31323334, 0 | 0x35363738,
-      0 | 0x39303132, 0 | 0x33343536, 0 | 0x37383930, 0 | 0x31323334,
-      0 | 0x35363738, 0 | 0x39303132, 0 | 0x33343536, 0 | 0x37383930
-    ],
-    8 * 80, [0 | 0xf371bc4a, 0 | 0x311f2b00, 0 | 0x9eef952d, 0 | 0xd83ca80e,
-      0 | 0x2b60026c, 0 | 0x8e935592, 0 | 0xd0f9c308, 0 | 0x453c813e
-    ],
-
-    // vector #8
-    // message = million times 'a'
-    // hash = cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0
-
-    (function(a, i) {
-      while (i--) a.push(0 | 0x61616161);
-      return a
-    })([], 25e4),
-    8 * 1e6, [0 | 0xcdc76e5c, 0 | 0x9914fb92, 0 | 0x81a1c7e2, 0 | 0x84d73e67,
-      0 | 0xf1809a48, 0 | 0xa497200e, 0 | 0x046d39cc, 0 | 0xc7112cd0
-    ]
-
-    
+      hash: [
+        0 | 0xe3b0c442, 0 | 0x98fc1c14, 0 | 0x9afbf4c8, 0 | 0x996fb924, 
+        0 | 0x27ae41e4, 0 | 0x649b934c, 0 | 0xa495991b, 0 | 0x7852b855]
+    },
+    {/*1*/
+      message: [// 'a'
+        0 | 0x61000000], 
+      messageLength: 8, 
+      hash: [
+        0 | 0xca978112, 0 | 0xca1bbdca, 0 | 0xfac231b3, 0 | 0x9a23dc4d,
+        0 | 0xa786eff8, 0 | 0x147c4e72, 0 | 0xb9807785, 0 | 0xafee48bb]
+    },
+    {/*2*/
+      message: [// 'abc'
+        0 | 0x61626300], 
+      messageLength: 8 * 3, 
+      hash: [
+        0 | 0xba7816bf, 0 | 0x8f01cfea, 0 | 0x414140de, 0 | 0x5dae2223,
+        0 | 0xb00361a3, 0 | 0x96177a9c, 0 | 0xb410ff61, 0 | 0xf20015ad]
+    },
+    {/*3*/
+      message: [//'message digest'
+        0 | 0x6d657373, 0 | 0x61676520, 0 | 0x64696765, 0 | 0x73740000],
+      messageLength: 8 * 14, 
+      hash: [
+        0 | 0xf7846f55, 0 | 0xcf23e14e, 0 | 0xebeab5b4, 0 | 0xe1550cad,
+        0 | 0x5b509e33, 0 | 0x48fbc4ef, 0 | 0xa3a1413d, 0 | 0x393cb650]
+    },
+    {/*4*/
+      message: [// 'abcdefghijklmnopqrstuvwxyz'
+        0 | 0x61626364, 0 | 0x65666768, 0 | 0x696a6b6c, 0 | 0x6d6e6f70,
+        0 | 0x71727374, 0 | 0x75767778, 0 | 0x797a0000],
+      messageLength: 8 * 26, 
+      hash: [
+        0 | 0x71c480df, 0 | 0x93d6ae2f, 0 | 0x1efad144, 0 | 0x7c66c952,
+        0 | 0x5e316218, 0 | 0xcf51fc8d, 0 | 0x9ed832f2, 0 | 0xdaf18b73]
+    },
+    {/*5*/
+      message: [// 'abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq'
+        0 | 0x61626364, 0 | 0x62636465, 0 | 0x63646566, 0 | 0x64656667,
+        0 | 0x65666768, 0 | 0x66676869, 0 | 0x6768696a, 0 | 0x68696a6b,
+        0 | 0x696a6b6c, 0 | 0x6a6b6c6d, 0 | 0x6b6c6d6e, 0 | 0x6c6d6e6f,
+        0 | 0x6d6e6f70, 0 | 0x6e6f7071],
+      messageLength: 8 * 56, 
+      hash: [
+        0 | 0x248d6a61, 0 | 0xd20638b8, 0 | 0xe5c02693, 0 | 0x0c3e6039,
+        0 | 0xa33ce459, 0 | 0x64ff2167, 0 | 0xf6ecedd4, 0 | 0x19db06c1]
+    },
+    {/*6*/
+      message: [// 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+        0 | 0x41424344, 0 | 0x45464748, 0 | 0x494a4b4c, 0 | 0x4d4e4f50,
+        0 | 0x51525354, 0 | 0x55565758, 0 | 0x595a6162, 0 | 0x63646566,
+        0 | 0x6768696a, 0 | 0x6b6c6d6e, 0 | 0x6f707172, 0 | 0x73747576,
+        0 | 0x7778797a, 0 | 0x30313233, 0 | 0x34353637, 0 | 0x38390000],
+      messageLength: 8 * 62, 
+      hash: [
+        0 | 0xdb4bfcbd, 0 | 0x4da0cd85, 0 | 0xa60c3c37, 0 | 0xd3fbd880,
+        0 | 0x5c77f15f, 0 | 0xc6b1fdfe, 0 | 0x614ee0a7, 0 | 0xc8fdb4c0
+      ]
+    },
+    {/*7*/
+      message: [// '12345678901234567890123456789012345678901234567890123456789012345678901234567890'
+        0 | 0x31323334, 0 | 0x35363738, 0 | 0x39303132, 0 | 0x33343536,
+        0 | 0x37383930, 0 | 0x31323334, 0 | 0x35363738, 0 | 0x39303132,
+        0 | 0x33343536, 0 | 0x37383930, 0 | 0x31323334, 0 | 0x35363738,
+        0 | 0x39303132, 0 | 0x33343536, 0 | 0x37383930, 0 | 0x31323334,
+        0 | 0x35363738, 0 | 0x39303132, 0 | 0x33343536, 0 | 0x37383930],
+      messageLength: 8 * 80, 
+      hash: [
+        0 | 0xf371bc4a, 0 | 0x311f2b00, 0 | 0x9eef952d, 0 | 0xd83ca80e,
+        0 | 0x2b60026c, 0 | 0x8e935592, 0 | 0xd0f9c308, 0 | 0x453c813e]
+    },
+    {/*8*/
+      message: // million times 'a'
+      (function(a, i) {
+        while (i--) a.push(0 | 0x61616161);
+        return a
+      })([], 25e4),
+      messageLength: 8 * 1e6, 
+      hash: [
+        0 | 0xcdc76e5c, 0 | 0x9914fb92, 0 | 0x81a1c7e2, 0 | 0x84d73e67,
+        0 | 0xf1809a48, 0 | 0xa497200e, 0 | 0x046d39cc, 0 | 0xc7112cd0]
+    }    
   ],
   'set 2': [
     /*0*/
