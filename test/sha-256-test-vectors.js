@@ -3172,9 +3172,11 @@ var SHA256TestVectors = {
   'set 4': {
     message: [],
     messageLength: 256,
-    hash:    [0 | 0x66687AAD, 0 | 0xF862BD77, 0 | 0x6C8FC18B, 0 | 0x8E9F8E20, 
-              0 | 0x08971485, 0 | 0x6EE233B3, 0 | 0x902A591D, 0 | 0x0D5F2925],
-    hash1e5: [0 | 0xB422BC9C, 0 | 0x0646A432, 0 | 0x433C2410, 0 | 0x991C95E2, 
-              0 | 0xD89758E3, 0 | 0xB4F540AC, 0 | 0xA863389F, 0 | 0x28A11379]
+    hash: [
+      0 | 0x66687AAD, 0 | 0xF862BD77, 0 | 0x6C8FC18B, 0 | 0x8E9F8E20, 
+      0 | 0x08971485, 0 | 0x6EE233B3, 0 | 0x902A591D, 0 | 0x0D5F2925],
+    hash1e5: [
+      0 | 0xB422BC9C, 0 | 0x0646A432, 0 | 0x433C2410, 0 | 0x991C95E2, 
+      0 | 0xD89758E3, 0 | 0xB4F540AC, 0 | 0xA863389F, 0 | 0x28A11379]
   }
 };
