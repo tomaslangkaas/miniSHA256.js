@@ -1,6 +1,5 @@
 /*
   Test vectors from project NESSIE
-  
   https://www.cosic.esat.kuleuven.be/nessie/testvectors/hash/sha/Sha-2-256.unverified.test-vectors
 */
 
