@@ -9,10 +9,12 @@ var hash   = sha256.digest(
                // message length in bits
                8 * 3
              );
-// check that hash is 
+// check (constant time comparison)that hash is 
 // BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD
-var isAsExpected = ('' + hash) === ('' + [
-  0 | 0xba7816bf, 0 | 0x8f01cfea, 0 | 0x414140de, 0 | 0x5dae2223,
-  0 | 0xb00361a3, 0 | 0x96177a9c, 0 | 0xb410ff61, 0 | 0xf20015ad]);
+var isAsExpected = miniSHA256.compare(
+  hash,
+  [0 | 0xba7816bf, 0 | 0x8f01cfea, 0 | 0x414140de, 0 | 0x5dae2223,
+   0 | 0xb00361a3, 0 | 0x96177a9c, 0 | 0xb410ff61, 0 | 0xf20015ad]
+);
 ```
 [Github pages](https://tomaslangkaas.github.io/miniSHA256.js/)
