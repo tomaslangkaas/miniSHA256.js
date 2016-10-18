@@ -9,7 +9,7 @@ var hash   = sha256.digest(
                // message length in bits
                8 * 3
              );
-// check (constant time comparison)that hash is 
+// check (constant time comparison) that hash is 
 // BA7816BF8F01CFEA414140DE5DAE2223B00361A396177A9CB410FF61F20015AD
 var isAsExpected = miniSHA256.compare(
   hash,
