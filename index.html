@@ -1,2 +1,74 @@
-<h1>miniSHA256.js</h1>
-<p><a href="https://github.com/tomaslangkaas/miniSHA256.js/blob/gh-pages/README.md">GitHub repository</a></p>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>miniSHA256.js</title>
+    <style>
+      body{
+        font-family: sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>miniSHA256.js</h1>
+    <p><a href="https://github.com/tomaslangkaas/miniSHA256.js/blob/gh-pages/README.md">GitHub repository</a></p>
+    <p><button onclick="runTests(logResult)">Run tests</button></p>
+    <p id="results"></p>
+    <script src="src/miniSHA256.js"></script>
+    <script src="test/sha-256-test-vectors.js"></script>
+    <script type="text/javascript">
+      /*function miniSHA256(){
+        return {
+            update: function(){},
+            digest: function(){
+              return [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+            }
+        }
+      }*/
+      function runTests(report){
+        var vectors = SHA256TestVectors,
+        set = vectors['set 1'],
+        i, result, pass = 0, total = 0,
+        message = [];
+        function assert(actual, expected){
+          total++;
+          if('' + actual === '' + expected){
+            pass++;
+          }
+        }
+        //set 1, vectors #0-#7
+        for(i = 0; i < 8; i++){
+          result = miniSHA256().digest(
+            set[i].message,
+            set[i].messageLength
+          );
+          assert(result, set[i].hash);
+        }
+        report(pass, total);
+        //set 2, 1024 vectors
+        set = vectors['set 2'];
+        for(i = 0; i < set.length/8; i++){
+          result = miniSHA256()
+            .digest(message, i);
+          assert(result, set.slice(i * 8, i * 8 + 8));
+        }
+        report(pass, total);
+        //set 3, 512 vectors
+        set = vectors['set 3'];
+        for(i = 0; i < set.length/8; i++){
+          //place 1 at bit position i in 512 bit array
+          message[i >>> 5] = 1 << (31 - (i & 31));
+          result = miniSHA256().digest(message, 512);
+          //reset bit position to 0
+          message[i >>> 5] = 0;
+          assert(result, set.slice(i * 8, i * 8 + 8));
+        }
+        report(pass, total);
+      }
+
+      function logResult(pass, total){
+        document.getElementById('results').innerHTML = 'Passed ' + pass + ' of ' + total;
+      }
+    </script>
+  </body>
+</html>
