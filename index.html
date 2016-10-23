@@ -15,8 +15,10 @@
     <p><button onclick="runTests(logResult)">Run tests</button></p>
     <p id="results"></p>
     <script src="src/miniSHA256.js"></script>
+    <script src="utils/bico.js"></script>
     <script src="test/sha-256-test-vectors.js"></script>
     <script type="text/javascript">
+      bico(bico, 'fromBits', 'toBits', '01', 1);
       /*function miniSHA256(){
         return {
             update: function(){},
@@ -29,11 +31,15 @@
         var vectors = SHA256TestVectors,
         set = vectors['set 1'],
         i, result, pass = 0, total = 0,
-        message = [];
-        function assert(actual, expected){
+        message = [],
+        failed = [],
+        date = +new Date;
+        function assert(actual, expected, failMessage){
           total++;
           if('' + actual === '' + expected){
             pass++;
+          }else{
+            failed.push(failMessage, actual, expected);
           }
         }
         //set 1, vectors #0-#7
@@ -44,7 +50,7 @@
           );
           assert(result, set[i].hash);
         }
-        report(pass, total);
+        report(pass, total, (+new Date) - date);
         //set 2, 1024 vectors
         set = vectors['set 2'];
         for(i = 0; i < set.length/8; i++){
@@ -52,7 +58,7 @@
             .digest(message, i);
           assert(result, set.slice(i * 8, i * 8 + 8));
         }
-        report(pass, total);
+        report(pass, total, (+new Date) - date);
         //set 3, 512 vectors
         set = vectors['set 3'];
         for(i = 0; i < set.length/8; i++){
@@ -63,11 +69,11 @@
           message[i >>> 5] = 0;
           assert(result, set.slice(i * 8, i * 8 + 8));
         }
-        report(pass, total);
+        report(pass, total, (+new Date) - date);
       }
 
-      function logResult(pass, total){
-        document.getElementById('results').innerHTML = 'Passed ' + pass + ' of ' + total;
+      function logResult(pass, total, time){
+        document.getElementById('results').innerHTML = 'Passed ' + pass + ' of ' + total + ', ' + time + ' ms';
       }
     </script>
   </body>
