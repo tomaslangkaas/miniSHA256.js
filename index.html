@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8">
     <title>miniSHA256.js</title>
+    <link rel="stylesheet" href="utils/base.css">
     <style>
-      body{
-        font-family: sans-serif;
+      @import url('https://fonts.googleapis.com/css?family=Ubuntu:300');
+      body, button, input, textarea, select, th, td, h1, h2, h3, h4, h5, h6{
+        font-family: 'Ubuntu', sans-serif;
       }
     </style>
   </head>
@@ -19,14 +22,7 @@
     <script src="test/sha-256-test-vectors.js"></script>
     <script type="text/javascript">
       bico(bico, 'fromBits', 'toBits', '01', 1);
-      /*function miniSHA256(){
-        return {
-            update: function(){},
-            digest: function(){
-              return [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-            }
-        }
-      }*/
+
       function runTests(report){
         var vectors = SHA256TestVectors,
         set = vectors['set 1'],
@@ -73,7 +69,7 @@
       }
 
       function logResult(pass, total, time){
-        document.getElementById('results').innerHTML = 'Passed ' + pass + ' of ' + total + ', ' + time + ' ms';
+        document.getElementById('results').innerHTML = 'Passed ' + pass + ' of ' + total + ' tests, ' + time + ' ms';
       }
     </script>
   </body>
