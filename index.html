@@ -1,27 +1,116 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="utf-8">
     <title>miniSHA256.js</title>
     <link rel="stylesheet" href="utils/base.css">
     <style>
-      @import url('https://fonts.googleapis.com/css?family=Ubuntu:300');
-      body, button, input, textarea, select, th, td, h1, h2, h3, h4, h5, h6{
-        font-family: 'Ubuntu', sans-serif;
-      }
+        @import url('https://fonts.googleapis.com/css?family=Ubuntu:300');
+        body,
+        button,
+        input,
+        textarea,
+        select,
+        th,
+        td,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Ubuntu', sans-serif;
+        }
     </style>
-  </head>
-  <body>
+</head>
+
+<body>
     <h1>miniSHA256.js</h1>
-    <p><a href="https://github.com/tomaslangkaas/miniSHA256.js/blob/gh-pages/README.md">GitHub repository</a></p>
+    <p>
+      <a href="https://github.com/tomaslangkaas/miniSHA256.js/blob/gh-pages/README.md">
+        GitHub repository
+      </a>
+    </p>
     <p><button onclick="runTests(logResult)">Run tests</button></p>
     <p id="results"></p>
+
     <script src="src/miniSHA256.js"></script>
     <script src="utils/bico.js"></script>
+    <script src="utils/Q.js"></script>
     <script src="test/sha-256-test-vectors.js"></script>
     <script type="text/javascript">
       bico(bico, 'fromBits', 'toBits', '01', 1);
+
+      var shaTests = Q(
+        function(state){},
+        function(testID, message){
+          console.log(testID, message);
+        },
+        function(testID, progress){
+          console.log(testID, (progress * 100) | 0);
+        }
+      );
+
+      shaTests.task(
+        'set1',
+        function(){
+          return function(done){
+            var pass = 0,
+                date = +new Date,
+                i, result,
+                set = SHA256TestVectors['set 1'];
+
+            for(i = 0; i < 8; i++){
+              result = miniSHA256().digest(
+                set[i].message,
+                set[i].messageLength
+              );
+              if('' + result === '' + set[i].hash){
+                pass++;
+              }
+            }
+            done([pass, i, (+new Date) - date]);
+          }
+        }
+      );
+
+      shaTests.task(
+        'set4',
+        function(){
+          var message = [],
+              date = +new Date,
+              pass = 0,
+              count = 1,
+              limit = 0;
+              set = SHA256TestVectors['set 4'];
+          message = miniSHA256().digest(
+            message,
+            256
+          );
+          if('' + message === '' + set.hash){
+            pass++;
+          }
+          return function(onComplete, onProgress){
+            limit += 12345;
+            for(count; count < 1e5 && count < limit; count++){
+              message = miniSHA256().digest(
+                message,
+                256
+              );
+            }
+            if(count == 1e5){
+              onComplete([
+                pass + ('' + message === '' + set.hash1e5),
+                2,
+                (+new Date) - date
+              ]);
+            } else {
+              onProgress(count / 1e5);
+            }
+          }
+        }
+      );
 
       function runTests(report){
         var vectors = SHA256TestVectors,

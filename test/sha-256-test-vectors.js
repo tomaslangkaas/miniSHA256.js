@@ -93,7 +93,7 @@ var SHA256TestVectors = {
         0 | 0xf1809a48, 0 | 0xa497200e, 0 | 0x046d39cc, 0 | 0xc7112cd0]
     }
   ],
-  'set 2': [
+  'set 2': [ // 0 bit strings of varying length (0-512)
     /*0*/
     0 | 0xe3b0c442, 0 | 0x98fc1c14, 0 | 0x9afbf4c8, 0 | 0x996fb924,
     0 | 0x27ae41e4, 0 | 0x649b934c, 0 | 0xa495991b, 0 | 0x7852b855,
