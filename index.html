@@ -35,6 +35,15 @@
     <p><button onclick="runTests(logResult)">Run tests</button></p>
     <p id="results"></p>
 
+    <p>
+      <button onclick="shaTests.reset();shaTests.run();">Run</button>
+      <table>
+        <tr><th>Test</th><th>Result</th><th>Elapsed time</th></tr>
+<tr id="shaTest1"></tr>
+<tr id="shaTest2"></tr>
+</table>
+    </p>
+
     <script src="src/miniSHA256.js"></script>
     <script src="utils/bico.js"></script>
     <script src="utils/Q.js"></script>
@@ -46,14 +55,16 @@
         function(state){},
         function(testID, message){
           console.log(testID, message);
+          document.getElementById(testID).innerHTML = '<td>'+testID+'</td><td>passed '+message[0]+' of '+message[1]+'</td><td>'+message[2]+' ms</td>';
         },
         function(testID, progress){
           console.log(testID, (progress * 100) | 0);
+          document.getElementById(testID).innerHTML = '<td>'+testID+'</td><td>'+((progress * 100) | 0)+' %</td><td></td>';
         }
       );
 
       shaTests.task(
-        'set1',
+        'shaTest1',
         function(){
           return function(done){
             var pass = 0,
@@ -76,7 +87,7 @@
       );
 
       shaTests.task(
-        'set4',
+        'shaTest2',
         function(){
           var message = [],
               date = +new Date,
