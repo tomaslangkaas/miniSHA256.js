@@ -54,12 +54,13 @@
       var shaTests = Q(
         function(state){},
         function(testID, message){
-          console.log(testID, message);
-          document.getElementById(testID).innerHTML = '<td>'+testID+'</td><td>passed '+message[0]+' of '+message[1]+'</td><td>'+message[2]+' ms</td>';
+          document.getElementById(testID).innerHTML = '<td>' + testID +
+          '</td><td>passed ' + message[0] + ' of ' + message[1] +
+          '</td><td>' + message[2] + ' ms</td>';
         },
         function(testID, progress){
-          console.log(testID, (progress * 100) | 0);
-          document.getElementById(testID).innerHTML = '<td>'+testID+'</td><td>'+((progress * 100) | 0)+' %</td><td></td>';
+          document.getElementById(testID).innerHTML = '<td>' + testID +
+          '</td><td>' + ((progress * 100) | 0) + ' %</td><td></td>';
         }
       );
 
@@ -93,6 +94,7 @@
               date = +new Date,
               pass = 0,
               count = 1,
+              iter = 5000,
               limit = 0;
               set = SHA256TestVectors['set 4'];
           message = miniSHA256().digest(
@@ -103,13 +105,16 @@
             pass++;
           }
           return function(onComplete, onProgress){
-            limit += 12345;
+            limit += iter;
+            var startDate = +new Date;
             for(count; count < 1e5 && count < limit; count++){
               message = miniSHA256().digest(
                 message,
                 256
               );
             }
+            iter = iter * 50 /((+new Date) - startDate);
+            console.log(iter, (+new Date) - startDate);
             if(count == 1e5){
               onComplete([
                 pass + ('' + message === '' + set.hash1e5),
