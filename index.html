@@ -41,6 +41,9 @@
         <tr><th>Test</th><th>Result</th><th>Elapsed time</th></tr>
 <tr id="shaTest1"></tr>
 <tr id="shaTest2"></tr>
+<tr id="shaTest3"></tr>
+<tr id="shaTest4"></tr>
+<tr id="shaTest5"></tr>
 </table>
     </p>
 
@@ -88,7 +91,53 @@
       );
 
       shaTests.task(
-        'shaTest2',
+        'shaTest3',
+        function(){
+          return function(done){
+            var pass = 0,
+                date = +new Date,
+                message = [],
+                i, result,
+                set = SHA256TestVectors['set 2'],
+                len = set.length / 8;
+            for (i = 0; i < len; i++) {
+                result = miniSHA256().digest(message, i);
+                if ('' + result === '' + set.slice(i * 8, i * 8 + 8)) {
+                  pass++;
+                }
+            }
+            done([pass, len, (+new Date) - date]);
+          }
+        }
+      );
+
+      shaTests.task(
+        'shaTest4',
+        function(){
+          return function(done){
+            var pass = 0,
+                date = +new Date,
+                message = [],
+                i, result,
+                set = SHA256TestVectors['set 3'],
+                len = set.length / 8;
+            for (i = 0; i < len; i++) {
+              //place 1 at bit position i in 512 bit array
+              message[i >>> 5] = 1 << (31 - (i & 31));
+              result = miniSHA256().digest(message, 512);
+              //reset bit position to 0
+              message[i >>> 5] = 0;
+              if ('' + result === '' + set.slice(i * 8, i * 8 + 8)) {
+                pass++;
+              }
+            }
+            done([pass, len, (+new Date) - date]);
+          }
+        }
+      );
+
+      shaTests.task(
+        'shaTest5',
         function(){
           var message = [],
               date = +new Date,
