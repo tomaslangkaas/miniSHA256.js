@@ -34,22 +34,21 @@ var SHA256tests = {
                 limit = 0,
                 sha = miniSHA256(),
                 vector = SHA256TestVectors['set 1'][8];
-            console.log(vector);
+
             return function(onComplete, onProgress) {
                 limit += iter;
                 var startDate = +new Date;
                 for (count; count < 15625 && count < limit; count++) {
-                  sha.update(vector.message, 1, count);
+                    sha.update(vector.message, 1, count);
                 }
                 iter = iter * 60 / ((+new Date) - startDate);
-console.log(iter);
 
                 if (count == 15625) {
 
-                  result = sha.digest();
-                  if('' + result === '' + vector.hash){
-                    pass++;
-                  }
+                    result = sha.digest();
+                    if ('' + result === '' + vector.hash) {
+                        pass++;
+                    }
 
 
                     onComplete([
@@ -119,7 +118,7 @@ console.log(iter);
                 count = 1,
                 iter = 5000,
                 limit = 0,
-            vectors = SHA256TestVectors['set 4'];
+                vectors = SHA256TestVectors['set 4'];
             message = miniSHA256().digest(
                 message,
                 256
