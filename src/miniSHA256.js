@@ -78,12 +78,14 @@ miniSHA256 = (function(s, p) {
   //clone:function(){},
   //update(words,startindex,stopindex) => array of 32 bit words, start at index, amount multiple of 16 (512 bits)
   //processes words, updates current hash and bitlength
-  update: function(m, i, j) { //little tested
+  update: function(m, blocks, i) { //little tested
+    i = i || 0;
+    blocks = blocks || (m.length >>> 4);
     var p = this.p,
       w = this.w,
       k = this.K,
       h = this.h,
-      b = (j - i) >>> 4;
+      b = blocks; //(j - i) >>> 4;
     this.l += b << 9;
     for (b; b--; i += 16) p(m, i, h, k, w);
     return this;
@@ -93,16 +95,18 @@ miniSHA256 = (function(s, p) {
   digest: function(m, l) {
     //provide array for hash result?
     //read m without copy or alter?
+    m = m || [];
+    l = l || 0;
     var p = this.p,
       w = this.w,
       k = this.K,
       h = this.h.slice(),
-      j = l >> 5,
+      j = l >>> 5,
       i;
     m = m.slice();
     m[j] |= (1 << 31) >>> (l & 31);
     m[j] &= -1 << (31 - (l & 31));
-    m[(j = ((l + 64 >> 9) << 4) + 16) - 1] = l + this.l;
+    m[(j = ((l + 64 >>> 9) << 4) + 16) - 1] = l + this.l;
     for (i = 0; i < j; i += 16) p(m, i, h, k, w);
     return h;
   }

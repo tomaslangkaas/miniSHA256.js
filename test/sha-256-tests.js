@@ -22,6 +22,48 @@ var SHA256tests = {
         }
     },
 
+    'shaTest2': {
+        title: 'Test 2',
+        setup: function() {
+            var message = [],
+                date = +new Date,
+                pass = 0,
+                count = 0,
+                result,
+                iter = 125,
+                limit = 0,
+                sha = miniSHA256(),
+                vector = SHA256TestVectors['set 1'][8];
+            console.log(vector);
+            return function(onComplete, onProgress) {
+                limit += iter;
+                var startDate = +new Date;
+                for (count; count < 15625 && count < limit; count++) {
+                  sha.update(vector.message, 1, count);
+                }
+                iter = iter * 60 / ((+new Date) - startDate);
+console.log(iter);
+
+                if (count == 15625) {
+
+                  result = sha.digest();
+                  if('' + result === '' + vector.hash){
+                    pass++;
+                  }
+
+
+                    onComplete([
+                        pass,
+                        1,
+                        (+new Date) - date
+                    ]);
+                } else {
+                    onProgress(count / 15625);
+                }
+            }
+        }
+    },
+
     'shaTest3': {
         title: 'Test 3',
         setup: function() {
