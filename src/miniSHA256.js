@@ -57,7 +57,7 @@ var miniSHA256 = (function(s, p) {
     t[6] = t[6] + g | 0;
     t[7] = t[7] + h | 0;
   },
-  update: function(m, blocks, i) { //little tested
+  'update': function(m, blocks, i) { //little tested
     i = i || 0;
     blocks = blocks || (m.length >>> 4);
     var p = this.p,
@@ -69,7 +69,7 @@ var miniSHA256 = (function(s, p) {
     for (b; b--; i += 16) p(m, i, h, k, w);
     return this;
   },
-  digest: function(m, l) {
+  'digest': function(m, l) {
     m = m || [];
     l = l || 0;
     var p = this.p,

@@ -1,5 +1,5 @@
-var miniSHA256HMAC = (function(SHA256) {
-    return function(key, keybits) {
+(function(SHA256) {
+    SHA256['hmac'] = function(key, keybits) {
         var inner = [],
             outer = [],
             i,
