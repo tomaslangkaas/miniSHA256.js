@@ -13,7 +13,7 @@ var miniSHA256 = (function(s, p) {
     function f() {
         return new s;
     };
-    f.compare = function(a, b) {
+    f['compare'] = function(a, b) {
         if (a.length !== b.length) return false;
         for (var i = 0, r = 0; i < a.length; i++) {
             r |= a[i] ^ b[i];
