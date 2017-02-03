@@ -16,7 +16,7 @@
             salt[last] = salt[last] & -1 << 31 - offset ^ c >>> offset;
             salt[last + 1] = c << 32 - offset;
             pmac = hmac(salt, saltlength + 32);
-            block[i] = pmac[0];
+            block[i]     = pmac[0];
             block[i + 1] = pmac[1];
             block[i + 2] = pmac[2];
             block[i + 3] = pmac[3];
@@ -26,7 +26,7 @@
             block[i + 7] = pmac[7];
             for (j = 1; j < iterations; j++) {
                 pmac = hmac(pmac, 256);
-                block[i] ^= pmac[0];
+                block[i]     ^= pmac[0];
                 block[i + 1] ^= pmac[1];
                 block[i + 2] ^= pmac[2];
                 block[i + 3] ^= pmac[3];
@@ -38,9 +38,7 @@
         }
         return block;
     }
-})(
-    miniSHA256
-);
+})(miniSHA256);
 
 /* minified 419 bytes
 (function(m){m.pbkdf2=function(d,e,f,g,n,a){var c;d=m.a(d,e);var p=a+1>>>2,b=[],h=1,k=g&31,l=g>>>5;for(a=0;a<p;a+=8,h++)for(f[l]=f[l]&-1<<31-k^h>>>k,f[l+1]=h<<32-k,c=d(f,g+32),b[a]=c[0],b[a+1]=c[1],b[a+2]=c[2],b[a+3]=c[3],b[a+4]=c[4],b[a+5]=c[5],b[a+6]=c[6],b[a+7]=c[7],e=1;e<n;e++)c=d(c,256),b[a]^=c[0],b[a+1]^=c[1],b[a+2]^=c[2],b[a+3]^=c[3],b[a+4]^=c[4],b[a+5]^=c[5],b[a+6]^=c[6],b[a+7]^=c[7];return b}})(miniSHA256);
