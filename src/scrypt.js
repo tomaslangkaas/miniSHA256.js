@@ -201,10 +201,67 @@
     test();
 })(miniSHA256);
 
-"70617373776f7264", 8 * 8, // 'password'
-"4e61436c", 4 * 8, // 'NaCl'
+var scryptVectors = [
+  {
+    P: [], PLen: 0, // P = ""
+    S: [], SLen: 0, // S = ""
+    N: 16, r: 1, p: 1,
+    dkLen: 64,
+    expected: [
+      0 | 0x77d65762, 0 | 0x38657b20, 0 | 0x3b19ca42, 0 | 0xc18a0497,
+      0 | 0xf16b4844, 0 | 0xe3074ae8, 0 | 0xdfdffa3f, 0 | 0xede21442,
+      0 | 0xfcd0069d, 0 | 0xed0948f8, 0 | 0x326a753a, 0 | 0x0fc81f17,
+      0 | 0xe8d3e0fb, 0 | 0x2e0d3628, 0 | 0xcf35e20c, 0 | 0x38d18906
+    ]
+  },
+  {
+    // P = "password"
+    P: [0 | 0x70617373, 0 | 0x776f7264], PLen: 8 * 8,
+    // S = "NaCl"
+    S: [0 | 0x4e61436c], SLen: 4 * 8,
+    N: 1024, r: 8, p: 16,
+    dkLen: 64,
+    expected: [
+      0 | 0xfdbabe1c, 0 | 0x9d347200, 0 | 0x7856e719, 0 | 0x0d01e9fe,
+      0 | 0x7c6ad7cb, 0 | 0xc8237830, 0 | 0xe7737663, 0 | 0x4b373162,
+      0 | 0x2eaf30d9, 0 | 0x2e22a388, 0 | 0x6ff10927, 0 | 0x9d9830da,
+      0 | 0xc727afb9, 0 | 0x4a83ee6d, 0 | 0x8360cbdf, 0 | 0xa2cc0640
+    ]
+  },
+  {
+    // P = "pleaseletmein"
+    P: [0 | 0x706c6561, 0 | 0x73656c65, 0 | 0x746d6569, 0 | 0x6e000000],
+    PLen: 13 * 8,
+    // S = "SodiumChloride"
+    S: [0 | 0x536f6469, 0 | 0x756d4368, 0 | 0x6c6f7269, 0 | 0x64650000],
+    SLen: 14 * 8,
+    N: 16384, r: 8, p: 1,
+    dkLen: 64,
+    expected: [
+      0 | 0x7023bdcb, 0 | 0x3afd7348, 0 | 0x461c06cd, 0 | 0x81fd38eb,
+      0 | 0xfda8fbba, 0 | 0x904f8e3e, 0 | 0xa9b543f6, 0 | 0x545da1f2,
+      0 | 0xd5432955, 0 | 0x613f0fcf, 0 | 0x62d49705, 0 | 0x242a9af9,
+      0 | 0xe61e85dc, 0 | 0x0d651e40, 0 | 0xdfcf017b, 0 | 0x45575887
+    ]
+  },
+  {
+    // P = "pleaseletmein"
+    P: [0 | 0x706c6561, 0 | 0x73656c65, 0 | 0x746d6569, 0 | 0x6e000000],
+    PLen: 13 * 8,
+    // S = "SodiumChloride"
+    S: [0 | 0x536f6469, 0 | 0x756d4368, 0 | 0x6c6f7269, 0 | 0x64650000],
+    SLen: 14 * 8,
+    N: 1048576, r: 8, p: 1,
+    dkLen: 64,
+    expected: [
+      0 | 0x2101cb9b, 0 | 0x6a511aae, 0 | 0xaddbbe09, 0 | 0xcf70f881,
+      0 | 0xec568d57, 0 | 0x4a2ffd4d, 0 | 0xabe5ee98, 0 | 0x20adaa47,
+      0 | 0x8e56fd8f, 0 | 0x4ba5d09f, 0 | 0xfa1c6d92, 0 | 0x7c40f4c3,
+      0 | 0x37304049, 0 | 0xe8a952fb, 0 | 0xcbf45c6f, 0 | 0xa77a41a4
+    ]
+  }
+];
 
-[0 | 0x706c6561, 0 | 0x73656c65, 0 | 0x746d6569, 0 | 0x6e000000], 13 * 8, //'pleaseletmein'
 /*
 bico.toHex(miniSHA256.scrypt([], 0, [], 0, 16, 1, 1, 64), 32);
 "77d6576238657b203b19ca42c18a0497f16b4844e3074ae8dfdffa3fede21442fcd0069ded0948f8326a753a0fc81f17e8d3e0fb2e0d3628cf35e20c38d18906"
