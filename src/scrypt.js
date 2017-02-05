@@ -69,6 +69,7 @@
               f(V, N * r32 - r32, x, 0, r, t1, t2);
             }
             setTimeout(run, 0);
+            onProgress(i);
           }else if(i < N2){
             target = Math.min(N2, i + iter);
             iter = target - i;
@@ -82,10 +83,12 @@
             if(i === N2){
               for (j = 0; j < r32; j++)
                   inputArr[j + readIndex] = (z = x[j]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
-              i++;
+              onProgress(i++);
+              //i++;
               onComplete();
             }else{
               setTimeout(run, 0);
+              onProgress(i);
             }
           }
           elapsed = (+new Date) - start;
@@ -123,12 +126,13 @@
         V.length = 32 * r * N;
         t.length = x.length = 32 * r;
         t1.length = t2.length = 16;
-        var total = N * p * 2,
+        var N2 = N * 2,
+            total = N2 * p,
             count = 0,
             i = -1;
 
         function progress(iter) {
-
+          onProgress((i * N2 + iter)/total);
         }
 
         function run() {
@@ -169,6 +173,10 @@ function scryptTest(indexes) {
             if (indexes.length) {
                 scryptTest(indexes);
             }
+        },
+        function(progress){
+          //console.log(progress);
+          //console.log((progress * 100).toFixed(1) + '%');
         }
     );
 }
