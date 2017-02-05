@@ -133,11 +133,11 @@
 
         function run() {
             if (i < (p - 1)) {
-                setTimeout(function() {
+                //setTimeout(function() {
                     i++;
                     ROMix(blocks, i * 32 * r, N, r,
                         V, t, x, t1, t2, run, progress);
-                }, 0);
+                //}, 0);
             } else {
                 onComplete(SHA256['pbkdf2'](
                     passphrase, passbits, blocks, p * 128 * r * 8, 1, dkBytes
