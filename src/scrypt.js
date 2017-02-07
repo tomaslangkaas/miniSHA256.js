@@ -1,4 +1,5 @@
 (function(SHA256, setTimeout) {
+    var running;
     //salsa20/8 quarterround
     //state array x, index a, index b, index c, index d, temp var
     function qr(x, a, b, c, d, t) {
@@ -8,10 +9,8 @@
         x[d] ^= (t = x[c] + x[b]) << 18 ^ t >>> 14;
     }
     //(readArr, startIndex, destArr, destIndex, param r, tempArr1, tempArr2)
-    function blockMix(readArr, startIndex, destArr, destIndex, r, t1, t2) {
-        var x = t1, //[],
-            w = t2, //[],
-            i,
+    function blockMix(readArr, startIndex, destArr, destIndex, r, x, w) {
+        var i,
             xx16, xx16r, t, xx, r2 = r * 2,
             j = (r2 - 1) * 16 + startIndex;
         //read first input
@@ -45,76 +44,62 @@
         t, x, t1, t2,
         onComplete, onProgress
     ) {
-      //console.log('rom N', N);
         var r32 = r * 32,
-            i, j, z, f = blockMix;
-        for (i = 0; i < r32; i++)
-            V[i] = (z = inputArr[i + readIndex]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
-        var ms = 50,
+            i = 1,
+            j, z, f = blockMix,
+            ms = 50,
             iter = 200,
             N2 = N * 2,
             target;
-        i = 1;
-        function run(){
-          //console.log('iter', iter, i + iter, Math.min(N, i + iter), N);
-          var start = +new Date, elapsed;
-          if(i < N){
-            target = Math.min(N, i + iter);
-            iter = target - i;
-            //console.log('t', target, iter, N);
-            for (; i < target; i++) {
-                f(V, r32 * i - r32, V, r32 * i, r, t1, t2);
-            }
-            if(i === N){
-              f(V, N * r32 - r32, x, 0, r, t1, t2);
-            }
-            setTimeout(run, 0);
-            onProgress(i);
-          }else if(i < N2){
-            target = Math.min(N2, i + iter);
-            iter = target - i;
-            for (; i < N2; i++) {
-                j = (x[r32 - 16] & (N - 1)) * r32;
-                for (z = 0; z < r32; z++) {
-                    t[z] = x[z] ^ V[z + j];
+        for (j = 0; j < r32; j++)
+            V[j] = (z = inputArr[j + readIndex]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
+
+        function run() {
+            if (!running) return;
+            var start = +new Date,
+                elapsed,
+                timer = setTimeout(run, 0); //set new timer early to avoid delay
+            if (i < N) {
+                target = Math.min(N, i + iter);
+                iter = target - i;
+                for (; i < target; i++) {
+                    f(V, r32 * i - r32, V, r32 * i, r, t1, t2);
                 }
-                f(t, 0, x, 0, r, t1, t2);
+                if (i === N) {
+                    f(V, N * r32 - r32, x, 0, r, t1, t2);
+                }
+                onProgress(i);
+            } else if (i < N2) {
+                target = Math.min(N2, i + iter);
+                iter = target - i;
+                for (; i < N2; i++) {
+                    j = (x[r32 - 16] & (N - 1)) * r32;
+                    for (z = 0; z < r32; z++) {
+                        t[z] = x[z] ^ V[z + j];
+                    }
+                    f(t, 0, x, 0, r, t1, t2);
+                }
+                if (i === N2) {
+                    clearTimeout(timer);
+                    for (j = 0; j < r32; j++)
+                        inputArr[j + readIndex] = (z = x[j]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
+                    onProgress(i++);
+                    onComplete();
+                } else {
+                    onProgress(i);
+                }
             }
-            if(i === N2){
-              for (j = 0; j < r32; j++)
-                  inputArr[j + readIndex] = (z = x[j]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
-              onProgress(i++);
-              //i++;
-              onComplete();
-            }else{
-              setTimeout(run, 0);
-              onProgress(i);
-            }
-          }
-          elapsed = (+new Date) - start;
-          //console.log(elapsed, iter, (iter * ms) / (elapsed || 1));
-          iter = (iter * ms) / (elapsed || 0.001);
+            elapsed = (+new Date) - start;
+            iter = (iter * ms) / (elapsed || 0.001);
         }
-        //setTimeout(run, 0); //speed up
-        setTimeout(run, 0); //speed up
+        setTimeout(run, 0); //speed up with two timers
         run();
-        /*for (i = 1; i < N; i++) {
-            f(V, r32 * i - r32, V, r32 * i, r, t1, t2);
-        }
-        f(V, N * r32 - r32, x, 0, r, t1, t2);
-        for (i = 0; i < N; i++) {
-            j = (x[r32 - 16] & (N - 1)) * r32;
-            for (z = 0; z < r32; z++) {
-                t[z] = x[z] ^ V[z + j];
-            }
-            f(t, 0, x, 0, r, t1, t2);
-        }
-        for (i = 0; i < r32; i++)
-            inputArr[i + readIndex] = (z = x[i]) >>> 24 ^ z >>> 8 & 65280 ^ (z & 65280) << 8 ^ (z & 255) << 24;
-        onComplete();*/
     }
 
     SHA256['scrypt'] = function(passphrase, passbits, salt, saltbits, N, r, p, dkBytes, onComplete, onProgress) {
+        if (running) {
+            return;
+        }
         var blocks = SHA256['pbkdf2'](
             passphrase, passbits, salt, saltbits, 1, p * 128 * r
         );
@@ -132,38 +117,33 @@
             i = -1;
 
         function progress(iter) {
-          onProgress((i * N2 + iter)/total);
+            onProgress((i * N2 + iter) / total);
         }
 
         function run() {
             if (i < (p - 1)) {
-                //setTimeout(function() {
-                    i++;
-                    ROMix(blocks, i * 32 * r, N, r,
-                        V, t, x, t1, t2, run, progress);
-                //}, 0);
+                i++;
+                ROMix(blocks, i * 32 * r, N, r,
+                    V, t, x, t1, t2, run, progress);
             } else {
+                running = 0;
                 onComplete(SHA256['pbkdf2'](
                     passphrase, passbits, blocks, p * 128 * r * 8, 1, dkBytes
                 ));
             }
         }
+        running = 1;
         run();
-        //console.log(blocks.length, 32 * r * p);
-        //        for (var i = 0; i < p; i++) {
-        //            ROMix(blocks, i * 32 * r, N, r,
-        //                V, t, x, t1, t2);
-        //        }
-        //        onComplete(SHA256['pbkdf2'](
-        //            passphrase, passbits, blocks, p * 128 * r * 8, 1, dkBytes
-        //        ));
+        return function() {
+            running = 0;
+        }
     }
 })(miniSHA256, setTimeout);
 
 function scryptTest(indexes) {
     var d = +new Date,
         vector = scryptVectors[indexes.shift()];
-    miniSHA256.scrypt(
+    window['stopScrypt'] = miniSHA256.scrypt(
         vector.P, vector.PLen,
         vector.S, vector.SLen,
         vector.N, vector.r, vector.p,
@@ -174,9 +154,9 @@ function scryptTest(indexes) {
                 scryptTest(indexes);
             }
         },
-        function(progress){
-          //console.log(progress);
-          //console.log((progress * 100).toFixed(1) + '%');
+        function(progress) {
+            //console.log(progress);
+            //console.log((progress * 100).toFixed(1) + '%');
         }
     );
 }
@@ -255,8 +235,6 @@ var scryptVectors = [{
 
 
 scryptTest([0, 1, 2]);
-//scryptTest(2); only works in chrome
-//scryptTest(3); out of memory (chrome)
 /*
 bico.toHex(miniSHA256.scrypt([], 0, [], 0, 16, 1, 1, 64), 32);
 "77d6576238657b203b19ca42c18a0497f16b4844e3074ae8dfdffa3fede21442fcd0069ded0948f8326a753a0fc81f17e8d3e0fb2e0d3628cf35e20c38d18906"
