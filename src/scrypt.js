@@ -96,11 +96,11 @@
         run();
     }
 
-    SHA256['scrypt'] = function(passphrase, passbits, salt, saltbits, N, r, p, dkBytes, onComplete, onProgress) {
+    SHA256['scrypt'] = function(passphrase, passbits, salt, saltbits, Nlog, r, p, dkBytes, onComplete, onProgress) {
         if (running) {
             return;
         }
-        var blocks = SHA256['pbkdf2'](
+        var N = 1 << Nlog, blocks = SHA256['pbkdf2'](
             passphrase, passbits, salt, saltbits, 1, p * 128 * r
         );
         var V = [],
@@ -134,9 +134,10 @@
         }
         running = 1;
         run();
-        return function() {
-            running = 0;
-        }
+    }
+
+    SHA256['scryptStop'] = function() {
+        running = 0;
     }
 })(miniSHA256, setTimeout);
 
@@ -146,7 +147,7 @@ function scryptTest(indexes) {
     window['stopScrypt'] = miniSHA256.scrypt(
         vector.P, vector.PLen,
         vector.S, vector.SLen,
-        vector.N, vector.r, vector.p,
+        vector.Nlog, vector.r, vector.p,
         vector.dkLen,
         function(hash) {
             console.log((+new Date) - d + ' ms', '' + hash === '' + vector.expected, hash);
@@ -167,6 +168,7 @@ var scryptVectors = [{
         S: [],
         SLen: 0, // S = ""
         N: 16,
+        Nlog: 4,
         r: 1,
         p: 1,
         dkLen: 64,
@@ -185,6 +187,7 @@ var scryptVectors = [{
         S: [0 | 0x4e61436c],
         SLen: 4 * 8,
         N: 1024,
+        Nlog: 10,
         r: 8,
         p: 16,
         dkLen: 64,
@@ -203,6 +206,7 @@ var scryptVectors = [{
         S: [0 | 0x536f6469, 0 | 0x756d4368, 0 | 0x6c6f7269, 0 | 0x64650000],
         SLen: 14 * 8,
         N: 16384,
+        Nlog: 14,
         r: 8,
         p: 1,
         dkLen: 64,
@@ -221,6 +225,7 @@ var scryptVectors = [{
         S: [0 | 0x536f6469, 0 | 0x756d4368, 0 | 0x6c6f7269, 0 | 0x64650000],
         SLen: 14 * 8,
         N: 1048576,
+        Nlog: 20,
         r: 8,
         p: 1,
         dkLen: 64,
