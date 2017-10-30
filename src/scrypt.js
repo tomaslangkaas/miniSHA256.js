@@ -96,25 +96,29 @@
         run();
     }
 
-    SHA256['scrypt'] = function(passphrase, passbits, salt, saltbits, Nlog, r, p, dkBytes, onComplete, onProgress) {
+    SHA256['scrypt'] = function(
+      passphrase, passbits,
+      salt, saltbits,
+      Nlog, r, p, dkBytes,
+      onComplete, onProgress
+    ) {
         if (running) {
             return;
         }
-        var N = 1 << Nlog, blocks = SHA256['pbkdf2'](
-            passphrase, passbits, salt, saltbits, 1, p * 128 * r
-        );
-        var V = [],
+        var N = 1 << Nlog,
+            blocks,
+            V = [],
             t = [],
             x = [],
             t1 = [],
-            t2 = [];
-        V.length = 32 * r * N;
-        t.length = x.length = 32 * r;
-        t1.length = t2.length = 16;
-        var N2 = N * 2,
+            t2 = [],
+            N2 = N * 2,
             total = N2 * p,
             count = 0,
             i = -1;
+        V.length = 32 * r * N;
+        t.length = x.length = 32 * r;
+        t1.length = t2.length = 16;
 
         function progress(iter) {
             onProgress((i * N2 + iter) / total);
@@ -127,13 +131,24 @@
                     V, t, x, t1, t2, run, progress);
             } else {
                 running = 0;
-                onComplete(SHA256['pbkdf2'](
-                    passphrase, passbits, blocks, p * 128 * r * 8, 1, dkBytes
-                ));
+                SHA256['pbkdf2'](
+                    passphrase, passbits,
+                    blocks, p * 128 * r * 8,
+                    1, dkBytes,
+                    onComplete
+                );
             }
         }
         running = 1;
-        run();
+        SHA256['pbkdf2'](
+            passphrase, passbits,
+            salt, saltbits,
+            1, p * 128 * r,
+            function(res){
+              blocks = res;
+              run();
+            }
+        )
     }
 
     SHA256['scryptStop'] = function() {

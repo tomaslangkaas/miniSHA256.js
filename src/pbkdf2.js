@@ -1,7 +1,9 @@
 (function(sha256) {
     sha256['pbkdf2'] = function(key, keylength,
         salt, saltlength,
-        iterations, dkbytelength) {
+        iterations, dkbytelength,
+        onComplete, onProgress
+      ) {
         var i,
             j,
             pmac,
@@ -36,7 +38,8 @@
                 block[i + 7] ^= pmac[7];
             }
         }
-        return block;
+        onComplete(block);
+        //return block;
     }
 })(miniSHA256);
 

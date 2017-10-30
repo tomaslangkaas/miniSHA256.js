@@ -10,6 +10,7 @@ var miniSHA256 = (function(s, p) {
         }
     }
     s.prototype = p;
+
     function f() {
         return new s;
     };
@@ -18,7 +19,22 @@ var miniSHA256 = (function(s, p) {
         for (var i = 0, r = 0; i < a.length; i++) {
             r |= a[i] ^ b[i];
         }
-        return !(r ^ 0)
+        return !(r ^ 0);
+    };
+    var speed;
+    f['speed'] = function(limit) {
+        if (limit || !speed) {
+            limit = limit || 1;
+            var d = +new Date,
+                i = 0,
+                diff, m = [];
+            while ((diff = (+new Date) - d) < limit) {
+                f().digest(m, 256);
+                i++;
+            }
+            speed = i / diff;
+        }
+        return speed;
     }
     return f;
 })(function() {
@@ -78,7 +94,7 @@ var miniSHA256 = (function(s, p) {
     },
     'digest': function(m, l) {
         m = m || [];
-        l = (l === void(0)? m.length * 32 : l);
+        l = (l === void(0) ? m.length * 32 : l);
         var p = this.p,
             w = this.w,
             k = this.K,
