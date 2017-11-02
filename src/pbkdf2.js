@@ -20,6 +20,7 @@
     c = 0;
 
     function run() {
+      var start = +new Date;
       for (; count < n; count++) {
         if (count % iterations) {
           pmac = hmac(pmac, 256);
@@ -40,10 +41,12 @@
         block[i + 7] ^= pmac[7];
       }
       if (count === n) {
+        console.log('iter', count/(((+new Date) - start) || .1));
         onComplete && onComplete(block);
       }
     }
-    setTimeout(run);
+    run();
+    //setTimeout(run);
     /*for (i = 0; i < blocklength; i += 8, c++) {
         salt[last] = salt[last] & -1 << 31 - offset ^ c >>> offset;
         salt[last + 1] = c << 32 - offset;

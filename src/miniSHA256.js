@@ -80,14 +80,14 @@ var miniSHA256 = (function(s, p) {
         t[6] = t[6] + g | 0;
         t[7] = t[7] + h | 0;
     },
-    'update': function(m, blocks, i) { //little tested
+    'update': function(m, blocks, i) {
         i = i || 0;
         blocks = blocks || (m.length >>> 4);
         var p = this.p,
             w = this.w,
             k = this.K,
             h = this.h,
-            b = blocks; //(j - i) >>> 4;
+            b = blocks;
         this.l += b << 9;
         for (b; b--; i += 16) p(m, i, h, k, w);
         return this;
