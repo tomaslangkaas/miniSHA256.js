@@ -11,8 +11,8 @@ var miniSHA256 = (function(s, p) {
     }
     s.prototype = p;
 
-    function f() {
-        return new s;
+    function f(m, b) {
+        return m ? (new s).digest(m, b) : new s;
     };
     f['compare'] = function(a, b) {
         if (a.length !== b.length) return false;
@@ -37,10 +37,11 @@ var miniSHA256 = (function(s, p) {
         return speed;
     }
     return f;
-})(function() {
+})(function(m, b) {
     this.w = []; //temp processing array
     this.h = this.H.slice(); //current hash
     this.l = 0; //current length in bits, 32 bit arr
+
 }, {
     K: [],
     H: [],

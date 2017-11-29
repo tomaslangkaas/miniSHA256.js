@@ -5,7 +5,9 @@
     requests = [],
     callbacks = [],
     words = [],
-    returnValues;
+    //uncompressed = [],
+    returnValues,
+    returnFormat;
 
   function sha256d(message) { // double sha256
     return miniSHA256().digest(miniSHA256().digest(message));
@@ -19,21 +21,25 @@
       buffer.push(i);
       while (requests.length && requests[0] <= buffer.length) {
         returnValues = buffer.splice(0, requests.shift());
-        callbacks.shift()((sha256d(returnValues.slice(0, 64)).concat(
-          sha256d(returnValues.slice(64))
-        )).slice(0, (words.shift() + 31) >>> 5));
+        callbacks.shift()(
+          (returnFormat = words.shift()) ?
+          (sha256d(returnValues.slice(0, 64)).concat(
+            sha256d(returnValues.slice(64))
+          )).slice(0, returnFormat) : returnValues
+        );
       }
     }
     while (--values) setTimeout(run);
     run();
   }
   collect(maxSize);
-  miniSHA256['entropy'] = function(bits, callback) {
+  miniSHA256['entropy'] = function(bits, callback, raw) {
     var values = (bits + 3) >> 2; // 4 bits per entropy value
     if (values > 0 && values <= requestLimit && typeof callback === 'function') {
       requests.push(values);
       callbacks.push(callback);
-      words.push(bits);
+      words.push(raw ? 0 : (bits + 31) >>> 5);
+      //uncompressed.push(raw);
       collect(values);
       return true;
     } else {
